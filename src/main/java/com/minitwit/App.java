@@ -12,10 +12,9 @@ import com.minitwit.service.impl.MiniTwitService;
 public class App {
 	
 	public static void main(String[] args) {
-    	AnnotationConfigApplicationContext ctx = new AnnotationConfigApplicationContext(App.class);
+    	@SuppressWarnings("resource")
+		AnnotationConfigApplicationContext ctx = new AnnotationConfigApplicationContext(App.class);
     	new WebConfig(ctx.getBean(MiniTwitService.class));
         ctx.registerShutdownHook();
-    }
-    
-    
+    }   
 }
