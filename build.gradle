@@ -1,8 +1,16 @@
 apply plugin: 'war'
 apply plugin: 'eclipse-wtp'
 
+apply plugin: 'checkstyle'
+apply plugin: 'pmd'
+apply plugin: 'findbugs'
+
 sourceCompatibility = 1.8
-version = '1.0'
+targetCompatibility = 1.8
+
+group = 'com.sparkjava'
+version = '1.0-SNAPSHOT'
+
 war {
     manifest {
         attributes 'Implementation-Title': 'minitwit',
@@ -16,8 +24,8 @@ repositories {
 }
 
 dependencies {
-    compile group: 'commons-collections', name: 'commons-collections', version: '3.2'
     testCompile group: 'junit', name: 'junit', version: '4.+'
+    
     compile 'com.sparkjava:spark-core:2.3'    
     compile 'com.sparkjava:spark-template-freemarker:2.3'
     compile 'org.freemarker:freemarker:2.3.23'
@@ -44,4 +52,39 @@ uploadArchives {
 
 tasks.withType(JavaCompile) {
     options.encoding = 'UTF-8'
+}
+
+checkstyle {
+  toolVersion = "6.13"
+  ignoreFailures = true // 분석결과 예외가 발생하면 빌드실패 발생시키는 것을 제외
+  configFile = file("${project.rootDir}/config/google_checks.xml") // 1.1.2 에서 작성한 checkstyle 파일 지정
+  reportsDir = file("${buildDir}/checkstyle-output") // 리포트 파일이 위치할 디렉토리 지정
+  //sourceSets = [sourceSets.main, sourceSets,test]
+}
+
+checkstyleMain {
+    reports {
+        xml.destination = file("${checkstyle.reportsDir}/checkstyle-report.xml") // 리포트 파일의 위치 및 파일명 지정
+    }
+}
+
+pmd {
+  ignoreFailures = true // 분석결과 예외가 발생하면 빌드실패 발생시키는 것을 제외
+    reportsDir = file("${buildDir}/pmd-output")
+}
+ 
+pmdMain {
+    reports {
+        xml.destination = file("${pmd.reportsDir}/pmd-report.xml")
+        xml.enabled = true
+    }
+}
+
+
+findbugsMain {
+     reports {
+          xml.enabled = true
+          html.enabled = false
+          xml.destination = file("${findbugs.reportsDir}/findbugs.xml")
+     }
 }
